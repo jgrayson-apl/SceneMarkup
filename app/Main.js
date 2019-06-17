@@ -39,20 +39,18 @@ define([
   "esri/layers/FeatureLayer",
   "esri/geometry/Extent",
   "esri/Graphic",
-  "esri/widgets/Feature",
   "esri/widgets/FeatureForm",
   "esri/widgets/Home",
   "esri/widgets/Search",
   "esri/widgets/LayerList",
   "esri/widgets/Legend",
-  "esri/widgets/ScaleBar",
-  "esri/widgets/Compass",
   "esri/widgets/BasemapGallery",
+  "esri/widgets/AreaMeasurement3D",
   "esri/widgets/Expand"
 ], function (calcite, declare, ApplicationBase, i18n, itemUtils, domHelper,
              number, locale, on, query, dom, domClass, domConstruct,
              IdentityManager, esriRequest, Evented, watchUtils, promiseUtils, Portal, Layer, GraphicsLayer, FeatureLayer, Extent,
-             Graphic, Feature, FeatureForm, Home, Search, LayerList, Legend, ScaleBar, Compass, BasemapGallery, Expand) {
+             Graphic, FeatureForm, Home, Search, LayerList, Legend, BasemapGallery, AreaMeasurement3D, Expand) {
 
   return declare([Evented], {
 
@@ -276,6 +274,29 @@ define([
               };
             }
           }
+        });
+
+
+        // 3D MEASUREMENT //
+        view.ui.add("measurement-panel", "bottom-left");
+        domClass.remove("measurement-panel", "hide");
+        let measurementWidget = null;
+        const enableMeasurement = (enabled) => {
+          if(enabled) {
+            measurementWidget = new AreaMeasurement3D({
+              container: domConstruct.create("div", {}, "measurement-node"),
+              view: view
+            });
+            measurementWidget.viewModel.newMeasurement();
+          } else {
+            measurementWidget.destroy();
+            measurementWidget = null;
+          }
+        };
+        const measurementInput = dom.byId("measure-enabled-input");
+        on(measurementInput, "change", () => {
+          domClass.toggle("measurement-node", "hide", !measurementInput.checked);
+          enableMeasurement(measurementInput.checked);
         });
 
 
@@ -530,6 +551,7 @@ define([
      * @param view
      */
     initializeSceneMarkup: function (view) {
+
 
       // TOOLS PANEL //
       view.ui.add("tools-panel", "top-right");

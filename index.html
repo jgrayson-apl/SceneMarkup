@@ -10,11 +10,9 @@
     <!-- End Responsive -->
     <link rel=icon href="./assets/favicon.ico" sizes="32x32" type="image/vnd.microsoft.icon">
     <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.1.0/css/calcite-web.min.css">
-    <!--<link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.1.0/css/calcite-web-dark.min.css">-->
     <link rel="stylesheet" href="./styles/main.css">
     <link rel="stylesheet" href="./styles/places.css">
     <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/css/main.css">
-    <!--<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">-->
     <script src="./app/dojo.js"></script>
     <script src="https://js.arcgis.com/4.9/"></script>
     <script>require(["Application/init"]);</script>
@@ -177,7 +175,14 @@
       <div id="slides-container" class="panel text-center"></div>
     </div>
 
-    <!-- NOTIFICATIONS -->
-    <div id="notifications-node"></div>
+    <div id="measurement-panel" class="panel panel-white hide">
+      <label class="toggle-switch trailer-half">
+        <input id="measure-enabled-input" type="checkbox" class="toggle-switch-input">
+        <span class="toggle-switch-track"></span>
+        <span class="toggle-switch-label">3D Measurement</span>
+      </label>
+      <div id="measurement-node" class="hide"></div>
+    </div>
+
   </body>
 </html>
