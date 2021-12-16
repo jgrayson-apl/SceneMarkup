@@ -277,29 +277,6 @@ define([
         });
 
 
-        // 3D MEASUREMENT //
-        view.ui.add("measurement-panel", "bottom-left");
-        domClass.remove("measurement-panel", "hide");
-        let measurementWidget = null;
-        const enableMeasurement = (enabled) => {
-          if(enabled) {
-            measurementWidget = new AreaMeasurement3D({
-              container: domConstruct.create("div", {}, "measurement-node"),
-              view: view
-            });
-            measurementWidget.viewModel.newMeasurement();
-          } else {
-            measurementWidget.destroy();
-            measurementWidget = null;
-          }
-        };
-        const measurementInput = dom.byId("measure-enabled-input");
-        on(measurementInput, "change", () => {
-          domClass.toggle("measurement-node", "hide", !measurementInput.checked);
-          enableMeasurement(measurementInput.checked);
-        });
-
-
         // SCENE MARKUP //
         this.initializeSceneMarkup(view);
 
@@ -553,6 +530,30 @@ define([
     initializeSceneMarkup: function (view) {
 
 
+      // 3D MEASUREMENT //
+      view.ui.add("measurement-panel", "bottom-left");
+      domClass.remove("measurement-panel", "hide");
+      let measurementWidget = null;
+      const enableMeasurement = (enabled) => {
+        if(enabled) {
+          measurementWidget = new AreaMeasurement3D({
+            container: domConstruct.create("div", {}, "measurement-node"),
+            view: view
+          });
+
+
+        } else {
+          measurementWidget.destroy();
+          measurementWidget = null;
+        }
+      };
+      const measurementInput = dom.byId("measure-enabled-input");
+      on(measurementInput, "change", () => {
+        domClass.toggle("measurement-node", "hide", !measurementInput.checked);
+        enableMeasurement(measurementInput.checked);
+      });
+
+
       // TOOLS PANEL //
       view.ui.add("tools-panel", "top-right");
       domClass.remove("tools-panel", "hide");
@@ -631,9 +632,15 @@ define([
 
         // GET FEATURE PROTOTYPE //
         const getPrototype = () => {
+
+          const measurementInfo = (measurementWidget != null)
+              ? `Area: ${measurementWidget.viewModel.measurement.area.text}\nPerimeter: ${measurementWidget.viewModel.measurement.perimeterLength.text}`
+              : null;
+
           const prototype = Graphic.fromJSON(markup_layer.templates[0].prototype);
           prototype.attributes.username = (this.base.portal.user) ? this.base.portal.user.username : "anonymous";
           prototype.attributes.createdon = (new Date()).valueOf();
+          prototype.attributes.comments = measurementInfo || "";
           return prototype;
         };
 
@@ -723,8 +730,7 @@ define([
 
         // RESET //
         const initializeReset = () => {
-          const admins = ["jgrayson", "apldemo"];
-          if(this.base.portal.user && admins.includes(this.base.portal.user.username)) {
+          if(this.base.portal?.user?.username.includes('jgrayson') ) {
             const reset_btn = dom.byId("reset-btn");
             on(reset_btn, "click", () => {
               markup_layer.queryFeatures({ where: "OBJECTID > 5", outFields: ["OBJECTID"] }).then(featureSet => {
